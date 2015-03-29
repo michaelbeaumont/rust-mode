@@ -288,18 +288,22 @@
     "const" "continue" "crate"
     "do"
     "else" "enum" "extern"
-    "false" "fn" "for"
+    "fn" "for"
     "if" "impl" "in"
     "let" "loop"
     "match" "mod" "move" "mut"
     "priv" "pub"
     "ref" "return"
-    "self" "static" "struct" "super"
-    "true" "trait" "type"
+    "static" "struct" "super"
+    "trait" "type"
     "unsafe" "use"
     "virtual"
     "where" "while"))
 
+(defconst rust-mode-constants
+          '("true" "false"
+            "self"
+            ))
 (defconst rust-special-types
   '("u8" "i8"
     "u16" "i16"
@@ -328,6 +332,9 @@
      ;; Special types
      (,(regexp-opt rust-special-types 'words) . font-lock-type-face)
 
+     ;; Constants
+     (,(regexp-opt rust-mode-constants 'words) . font-lock-constant-face)
+
      ;; Attributes like `#[bar(baz)]` or `#![bar(baz)]` or `#[bar = "baz"]`
      (,(rust-re-grab (concat "#\\!?\\[" rust-re-ident "[^]]*\\]"))
       1 font-lock-preprocessor-face keep)
@@ -335,6 +342,10 @@
      ;; Syntax extension invocations like `foo!`, highlight including the !
      (,(concat (rust-re-grab (concat rust-re-ident "!")) "[({[:space:][]")
       1 font-lock-preprocessor-face)
+
+     ;; Function calls
+     (,(concat (rust-re-grab rust-re-ident) "(")
+      1 font-lock-function-name-face)
 
      ;; Field names like `foo:`, highlight excluding the :
      (,(concat (rust-re-grab rust-re-ident) ":[^:]") 1 font-lock-variable-name-face)
